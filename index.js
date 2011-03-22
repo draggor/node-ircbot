@@ -40,6 +40,8 @@ bot.prototype.loadPlugin = function(name) {
 	var cleanName = sanitize(name)
 	  , pl = plugin('./plugins/' + cleanName);
 
+	pl.setBot(this);
+
 	if(this.plugins[cleanName]) {
 		this.removePlugin(cleanName);
 	}
