@@ -4,8 +4,10 @@ var plugin = require('../../plugin')
 var regex = /\[[\dd\+\*\-\/\.\(\)]*\]/g;
 
 function parseLine(from, to, msg) {
-	var roll = msg.match(regex).map(rollDice);
-	dicep.bot.client.say(to, roll);
+	var exprs = msg.match(regex);
+	if(exprs) {
+		dicep.bot.client.say(to, exprs.map(rollDice));
+	}
 }
 
 function rollDice(expr) {
