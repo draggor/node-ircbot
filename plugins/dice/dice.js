@@ -69,11 +69,45 @@ function dice(a, b) {
 	return sum;
 }
 
+function objOp(op, a, b) {
+	if(typeof a === 'object' && typeof b === 'number') {
+		a[0] = op(a[0], b);
+		a[1].push(b);
+		return a;
+	} else if(typeof a === 'object' && typeof b === 'object') {
+		a[0] = op(a[0], b[0]);
+		a[1] = a[1].concat(b[1]);
+		return a;
+	} else if(typeof a === 'number' && typeof b === 'object') {
+		b[0] = op(a, b[0]);
+		b[1].push(a);
+		return b;
+	} else if(typeof a === 'number' && typeof b === 'number') {
+		return [op(a, b), [a, b]];
+	}
+}
+
+function add(a, b) {
+	return a + b;
+}
+
+function sub(a, b) {
+	return a - b;
+}
+
+function mul(a, b) {
+	return a * b;
+}
+
+function div(a, b) {
+	return a / b;
+}
+
 var OPS = {
 	'd': dice,
 	'D': dice,
-	'+': function(a, b) { return a + b; },
-	'-': function(a, b) { return a - b; },
-	'*': function(a, b) { return a * b; },
-	'/': function(a, b) { return a / b; }
+	'+': function(a, b) { return objOp(add, a, b); },
+	'-': function(a, b) { return objOp(sub, a, b); },
+	'*': function(a, b) { return objOp(mul, a, b); },
+	'/': function(a, b) { return objOp(div, a, b); }
 };

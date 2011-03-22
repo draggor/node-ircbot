@@ -6,7 +6,12 @@ var regex = /\[[\dd\+\*\-\/\.\(\)]*\]/g;
 function parseLine(from, to, msg) {
 	var exprs = msg.match(regex);
 	if(exprs) {
-		dicep.bot.client.say(to, exprs.map(rollDice));
+		var rolls = exprs.map(rollDice),
+		  , say = from + ': ';
+		for(var i = 0; i < rolls.length; i++) {
+			say += rolls[i][0] + ' => ' + rolls[i][1][1] + ' => ' + rolls[i][1][0] + ' <|> ';
+		}
+		dicep.bot.client.say(to, say);
 	}
 }
 
