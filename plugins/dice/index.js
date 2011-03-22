@@ -11,7 +11,7 @@ function parseLine(from, to, msg) {
 }
 
 function rollDice(expr) {
-	return [expr, dice.read(expr)];
+	return [expr, dice(expr)];
 }
 
 var dicep = {
