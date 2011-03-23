@@ -1,8 +1,8 @@
-var plugin = require('../../plugin')
-  , dice = require('./dice')
-  ;
+var dice = require('./diceParser');
 
-var regex = /\[[\dd\+\*\-\/\.\(\)]*\]/g;
+console.log('Dice Plugin Loaded');
+
+var regex = /\[[\dd\+\*\-\/\.\(\)\s]*\]/g;
 
 function parseLine(from, to, msg) {
 	var exprs = msg.match(regex);
@@ -19,7 +19,11 @@ function parseLine(from, to, msg) {
 			     + ' <|> '
 			     ;
 		}
-		dicep.bot.client.say(to, say);
+		if(to === dicep.bot.nick) {
+			dicep.bot.say(from, say);
+		} else {
+			dicep.bot.say(to, say);
+		}
 	}
 }
 
@@ -32,8 +36,9 @@ var dicep = {
 		dicep.bot = bot;
 	},
 	listeners: {
-		'*': parseLine
-	}
+		'message': parseLine
+	},
+	reload: ['./diceParser'].map(require.resolve)
 };
 
 module.exports = dicep;

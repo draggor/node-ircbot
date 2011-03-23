@@ -1,6 +1,6 @@
 var irc = require('irc')
-  , plugin = require('./plugin')
   , repl = require('repl')
+  , util = require('./util')
   ;
 
 function bot(server, nick, options) {
@@ -8,7 +8,9 @@ function bot(server, nick, options) {
 	this.nick = nick;
 	this.options = options;
 	this.plugins = {};
+	this.throttle = options.throttle || 2000;
 	this.client = new irc.Client(server, nick, options);
+	this.say = util.throttle(irc.Client.prototype.say, this.throttle, this.client);
 }
 
 function sanitize(str) {
@@ -30,27 +32,41 @@ bot.prototype.modifyListeners = function(plugin, func) {
 
 bot.prototype.modifyListener = function(name, func, mod) {
 	switch(name) {
-		case '*':
+		case 'message':
 			this.client[mod]('message', func);
+			break;
+		case 'pm':
+			this.client[mod]('pm', func);
 			break;
 	}
 };
 
 bot.prototype.loadPlugin = function(name) {
-	var cleanName = sanitize(name)
-	  , pl = plugin('./plugins/' + cleanName);
-
-	pl.setBot(this);
+	var cleanName = './plugins/' + sanitize(name)
+	  , full = require.resolve(cleanName)
+	  , pl = require.cache[full]
+	  ;
+	
+	if(pl) {
+		delete require.cache[full];
+		for(var i in pl.reload) {
+			delete require.cache[pl.reload[i]];
+		}
+	}
 
 	if(this.plugins[cleanName]) {
 		this.removePlugin(cleanName);
 	}
-	
+
+	pl = require(full);
+	pl.setBot(this);
+
+
 	this.plugins[cleanName] = pl;
 	this.modifyListeners(pl, 'add');
 };
 
-bot.prototype.removePlugin = function(name) {
+bot.prototype.unloadPlugin = function(name) {
 	var pl = this.plugins[name];
 
 	this.modifyListeners(pl, 'remove');
