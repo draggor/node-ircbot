@@ -7,9 +7,9 @@ exports.run = function(info) {
 	} else {
 		var err = 'COMMAND NOT FOUND: ' + info.cmdstr;
 		if(info.to === info.bot.nick) {
-			info.bot.say(from, err);
+			info.bot.say(info.from, err);
 		} else {
-			info.bot.say(to, err);
+			info.bot.say(info.to, err);
 		}
 	}
 };

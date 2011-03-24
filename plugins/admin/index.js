@@ -1,4 +1,6 @@
-var commands = require('./cmd');
+var commands = require('./cmd')
+  , util = require('../../util')
+  ;
 
 function parseLine(from, to, msg) {
 	if(msg[0] === '!') {
@@ -7,7 +9,7 @@ function parseLine(from, to, msg) {
 			  from: from,
 			  to: to,
 			  msg: msg,
-			  cmdstr: sp[0],
+			  cmdstr: sp[0].substr(1),
 			  rest: sp[1],
 			  bot: adminp.bot
 		  }

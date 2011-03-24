@@ -55,7 +55,7 @@ bot.prototype.loadPlugin = function(name) {
 	}
 
 	if(this.plugins[cleanName]) {
-		this.removePlugin(cleanName);
+		this.unloadPlugin(name);
 	}
 
 	pl = require(full);
@@ -67,9 +67,14 @@ bot.prototype.loadPlugin = function(name) {
 };
 
 bot.prototype.unloadPlugin = function(name) {
-	var pl = this.plugins[name];
+	var cleanName = './plugins/' + sanitize(name)
+	  , pl = this.plugins[cleanName]
+	  ;
 
-	this.modifyListeners(pl, 'remove');
+	if(pl) {
+		this.modifyListeners(pl, 'remove');
+		delete this.plugins[cleanName];
+	}
 };
 
 module.exports = bot;
