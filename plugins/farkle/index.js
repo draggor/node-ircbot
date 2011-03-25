@@ -8,10 +8,6 @@ Array.prototype.has = function(item) {
 	}
 };
 
-Array.prototype.group = function() {
-	return util.group(this);
-};
-
 var games = {};
 
 function Game(limit) {
@@ -86,7 +82,7 @@ function length(a) {
 
 function score(roll) {
 	var sum = 0;
-	var group = roll.group();
+	var group = util.group(roll);
 
 	if(group.length === 6) {
 		return 1500;
@@ -95,9 +91,8 @@ function score(roll) {
 	}
 
 	var sr = group.map(scoreGroup);
-
-	for(var i = 0; i < roll; i++) {
-		sum += sr[i][1];
+	for(var i = 0; i < sr.length; i++) {
+		sum += sr[i]();
 	}
 	return sum;
 }
@@ -126,11 +121,9 @@ var scores = {
 
 function scoreGroup(group) {
 	if(group.length === 1 || group.length === 3) {
-		return scores[group.toString()]();
-	} else if (group.length == 2) {
-		return scores[group.toString()](scores[group.toString().substr(2)])();
+		return scores[group.toString()];
 	} else {
-
+		return scores[group.toString().replace(/\d/g, 'N')](scoreGroup(group.slice(1)));
 	}
 }
 
@@ -187,4 +180,4 @@ var farklep = {
 	}
 };
 
-module.exports = farklep;
+//module.exports = farklep;
