@@ -127,3 +127,18 @@ exports.split = function(str, separator, limit) {
 
 	return sp;
 };
+
+exports.group = function(a) {
+	if(a.length < 2) {
+		return [a];
+	}
+	var ret = [[a[0]]];
+	for(var i = 1; i < a.length; i++) {
+		if(ret[0][0] === a[i]) {
+			ret[0].push(a[i]);
+		} else {
+			ret.unshift([a[i]]);
+		}
+	}
+	return ret.reverse();
+}

@@ -3,14 +3,9 @@ var util = require('../../util');
 exports.run = function(info) {
 	var cmd = cmds[info.cmdstr];
 	if(cmd) {
-		cmd(info, info.bot);
+		cmd(info);
 	} else {
-		var err = 'COMMAND NOT FOUND: ' + info.cmdstr;
-		if(info.to === info.bot.nick) {
-			info.bot.say(info.from, err);
-		} else {
-			info.bot.say(info.to, err);
-		}
+		console.log('Plugin<admin>: COMMAND NOT FOUND: ' + info.cmdstr);
 	}
 };
 
