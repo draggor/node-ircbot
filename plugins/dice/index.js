@@ -32,9 +32,6 @@ function rollDice(expr) {
 }
 
 var dicep = {
-	setBot: function(bot) {
-		dicep.bot = bot;
-	},
 	listeners: {
 		'message': parseLine
 	},

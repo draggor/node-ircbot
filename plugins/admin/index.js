@@ -20,9 +20,6 @@ function parseLine(from, to, msg) {
 }
 
 var adminp = {
-	setBot: function(bot) {
-		adminp.bot = bot;
-	},
 	listeners: {
 		'message': parseLine
 	},

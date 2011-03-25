@@ -20,11 +20,12 @@ function sanitize(str) {
 bot.prototype.modifyListeners = function(plugin, func) {
 	var mod = func + 'Listener';
 	for(var i in plugin.listeners) {
-		if(typeof plugin.listeners[i] === 'function') {
-			this.modifyListener(i, plugin.listeners[i], mod);
+		var listener = plugin.listeners[i];
+		if(typeof listener === 'function') {
+			this.modifyListener(i, listener, mod);
 		} else {
-			for(var j in plugin.listeners[i]) {
-				this.modifyListener(i, plugin.listeners[i][j], mod);
+			for(var j in listener) {
+				this.modifyListener(i, listener[j], mod);
 			}
 		}
 	}
@@ -41,12 +42,12 @@ bot.prototype.modifyListener = function(name, func, mod) {
 	}
 };
 
-bot.prototype.loadPlugin = function(name) {
+bot.prototype.loadPlugin = function(name, options) {
 	var cleanName = './plugins/' + sanitize(name)
 	  , full = require.resolve(cleanName)
 	  , pl = require.cache[full]
 	  ;
-	
+
 	if(pl) {
 		delete require.cache[full];
 		for(var i in pl.reload) {
@@ -59,17 +60,20 @@ bot.prototype.loadPlugin = function(name) {
 	}
 
 	pl = require(full);
-	pl.setBot(this);
+	pl.options = options || {};
+	pl.bot = this;
 
 
 	this.plugins[cleanName] = pl;
 	this.modifyListeners(pl, 'add');
 };
 
-bot.prototype.unloadPlugin = function(name) {
+bot.prototype.unloadPlugin = function(name, options) {
 	var cleanName = './plugins/' + sanitize(name)
 	  , pl = this.plugins[cleanName]
 	  ;
+	
+	pl.options = options || {};
 
 	if(pl) {
 		this.modifyListeners(pl, 'remove');

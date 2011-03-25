@@ -15,10 +15,6 @@ function read(input) {
 	return (new ReParse(input, true)).start(brackets);
 }
 
-function line() {
-	return this.match(/\[[\dd\+\*\-\/\.\(\)]*\]/g);
-}
-
 function brackets() {
 	return this.between(/^\[/, /^\]/, expr);
 }
