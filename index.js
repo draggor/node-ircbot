@@ -39,6 +39,7 @@ bot.prototype.addListeners = function(plugin) {
 		});
 	} else if (opt['!chan']) {
 		req.push(function(from, to, msg) {
+			console.log(to.toLowerCase());
 			return !~opt.chan.indexOf(to.toLowerCase());
 		});
 	}
@@ -48,6 +49,7 @@ bot.prototype.addListeners = function(plugin) {
 		});
 	} else if (opt['!nick']) {
 		req.push(function(from, to, msg) {
+			console.log(from.toLowerCase());
 			return !~opt.nick.indexOf(from.toLowerCase());
 		});
 	}
