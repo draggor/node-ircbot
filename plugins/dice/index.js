@@ -1,7 +1,5 @@
 var dice = require('./diceParser');
 
-console.log('Dice Plugin Loaded');
-
 var regex = /\[[\dd\+\*\-\/\.\(\)\s]*\]/g;
 
 function parseLine(from, to, msg) {

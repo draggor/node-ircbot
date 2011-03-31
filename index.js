@@ -39,7 +39,6 @@ bot.prototype.addListeners = function(plugin) {
 		});
 	} else if (opt['!chan']) {
 		req.push(function(from, to, msg) {
-			console.log(to.toLowerCase());
 			return !~opt.chan.indexOf(to.toLowerCase());
 		});
 	}
@@ -49,11 +48,10 @@ bot.prototype.addListeners = function(plugin) {
 		});
 	} else if (opt['!nick']) {
 		req.push(function(from, to, msg) {
-			console.log(from.toLowerCase());
 			return !~opt.nick.indexOf(from.toLowerCase());
 		});
 	}
-	if(opt.chan || opt.nick) {
+	if(opt.chan || opt.nick || opt['!chan'] || opt['!nick']) {
 		reqf = function(listener) {
 			return function(from, to, msg) {
 				if(!!~req.map(function(f) { return f(from, to, msg); }).indexOf(true)) {
@@ -148,6 +146,7 @@ bot.prototype.loadPlugin = function(name, options) {
 
 	this.plugins[cleanName] = pl;
 	this.addListeners(pl);
+	this.say('Plugin loaded: ' + name);
 };
 
 bot.prototype.unloadPlugin = function(name, options) {
@@ -161,6 +160,7 @@ bot.prototype.unloadPlugin = function(name, options) {
 	if(pl) {
 		this.removeListeners(pl);
 		delete this.plugins[cleanName];
+		this.say('Plugin unloaded: ' + name);
 	}
 };
 
