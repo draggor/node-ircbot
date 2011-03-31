@@ -6,15 +6,16 @@ process.on('uncaughtException', function(err) {
 	console.log('Uncaught Exception: ' + err);
 });
 
-b = new bot('irc.freenode.net', 'nodeboy1184-2', {
+b = new bot('irc.freenode.net', 'nodeboy1184', {
+	port: 6667,
 	userName: 'nodeboy',
 	realName: 'nodeboy',
-//	debug: true,
+	debug: true,
 	secure: false,
-	channels: ['#dracolair']
+	channels: ['#farkle', '#dracolair']
 });
 
-b.loadPlugin('admin');
+b.loadPlugin('admin', {nick: ['draggor']});
 //b.loadPlugin('dice');
 
 var r = repl.start();

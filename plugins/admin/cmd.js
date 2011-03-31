@@ -10,7 +10,7 @@ exports.run = function(info) {
 };
 
 function listArgsCommand(func, info) {
-	var sp = info.rest.split(' ')
+	var sp = info.rest.toLowerCase().split(' ')
 	  , name = sp.shift()
 	  , args = {}
 	  ;

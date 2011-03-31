@@ -3,9 +3,10 @@ var util = require('../../util');
 Array.prototype.has = function(item) {
 	for(var i = 0; i < this.length; i++) {
 		if(this[i] === item) {
-			return this[i];
+			return i;
 		}
 	}
+	return -1;
 };
 
 var games = {};
@@ -14,25 +15,35 @@ function Game(limit) {
 	this.limit = limit || 10000;
 	this.players = {};
 	this.order = [];
-	this.state = ['join'];
+	this.state = ['join', 'start'];
 	this.lastRoll;
-	this.runningTotal;
+	this.runningTotal = 0;
+	this.dice;
 }
 
 Game.prototype.shift = function() {
 	this.order.push(this.order.shift());
 };
 
+Game.prototype.farkle = function() {
+	this.lastRoll = [];
+	this.runningTotal = 0;
+	this.dice = 0;
+	this.state = ['roll'];
+	this.shift();
+};
+
 function Player(nick) {
 	this.nick = nick;
 	this.score = 0;
 	this.farkle = 0;
+	this.points = false;
 }
 
 function req(func) {
 	return function(info) {
-		var game = games[info.from];
-		if(game && game.state.has(info.cmdstr)) {
+		var game = games[info.to];
+		if(game && game.state.has(info.cmdstr) >= 0) {
 			func(info, game);
 		}
 	};
@@ -40,8 +51,8 @@ function req(func) {
 
 function reqp(func) {
 	return function(info) {
-		var game = games[info.from];
-		if(game && game.state.has(info.cmdstr) && game.order[0] === info.from) {
+		var game = games[info.to];
+		if(game && game.state.has(info.cmdstr) >= 0 && game.order[0] === info.from) {
 			var player = game.players[game.order[0]];
 			func(info, game, player);
 		}
@@ -56,8 +67,8 @@ function parseLine(from, to, msg) {
 			  to: to,
 			  msg: msg,
 			  cmdstr: sp[0].substr(1),
-			  rest: sp[1],
-			  bot: adminp.bot
+			  rest: sp[1] ? sp[1].trim() : sp[1],
+			  bot: farklep.bot
 		  }
 		  ;
 
@@ -72,8 +83,8 @@ function runCmd(info) {
 	}
 }
 
-function roll() {
-	return [0,0,0,0,0,0].map(function() { return Math.floor(Math.random() * 6) + 1; });
+function roll(n) {
+	return [0,0,0,0,0,0].slice(6 - n).map(function() { return Math.floor(Math.random() * 6) + 1; });
 }
 
 function length(a) {
@@ -81,20 +92,35 @@ function length(a) {
 }
 
 function score(roll) {
-	var sum = 0;
-	var group = util.group(roll);
+	var sum = 0
+	  , group = util.group(roll.slice().sort())
+	  , hasZero = false;
 
 	if(group.length === 6) {
-		return 1500;
+		return {
+			total: 1500,
+			hasZero: false
+		};
 	} else if(group.map(length).toString() === '2,2,2') {
-		return 500;
+		return {
+			total: 500,
+			hasZero: false
+		};
 	}
 
 	var sr = group.map(scoreGroup);
 	for(var i = 0; i < sr.length; i++) {
-		sum += sr[i]();
+		var gs = sr[i]();
+		if(gs == 0) {
+			hasZero = true;
+		} else {
+			sum += sr[i]();
+		}
 	}
-	return sum;
+	return {
+		total: sum,
+		hasZero: hasZero
+	};
 }
 
 function zero () { return 0; }
@@ -129,14 +155,14 @@ function scoreGroup(group) {
 
 var cmds = {
 	new: function(info) {
-		if(!games[info.from]) {
-			var g = games[info.from] = new Game(parseInt(info.rest));
+		if(!games[info.to]) {
+			var g = games[info.to] = new Game(parseInt(info.rest));
 			info.bot.say(info.to, 'New game started with limit ' + g.limit + '.  Type !join to play!');
 		}
 	},
 	join: req(function(info, g) {
 		g.players[info.from] = new Player(info.from);
-		g.order.push[info.from];
+		g.order.push(info.from);
 		info.bot.say(info.to, info.from + ' joined the game!');
 	}),
 	start: req(function(info, g) {
@@ -148,29 +174,97 @@ var cmds = {
 		info.bot.say(info.to, 'Game has started! ' + g.order[0] + ' is up first.  You should !roll');
 		g.state = ['roll'];
 	}),
-	info: req(function(info, g) {
-		var p = game.players[info.rest];
-		info.bot.say(info.to, p.nick + ': ' + p.score + ', ' + p.farkle + ' farkles');
-	}),
+	info: function(info) {
+		var g = games[info.to];
+		if(g) {
+			var p = g.players[info.rest];
+			info.bot.say(info.to, p.nick + ': ' + p.score + ', ' + p.farkle + ' farkles');
+		}
+	},
 	roll: reqp(function(info, g, p) {
-		// Roll stuff
+		var r = roll(6)
+		  , s = score(r)
+		  ;
+		
+		info.bot.say(info.to, 'You rolled ' + r + '.  !keep some dice');
+
+		if(s.total === 0) {
+			g.farkle();
+			if(++p.farkle >= 3) {
+				p.score -= 500;
+				info.bot.say(info.to, 'Six die farkle!  Order is reversed!  You lost 500 points!');
+			} else {
+				info.bot.say(info.to, 'Six die farkle!  Order is reversed!');
+			}
+			info.bot.say(info.to, g.order[0] + ': You\'re up, !roll');
+			return;
+		}
+		g.lastRoll = r;
+		g.runningTotal = 0;
 		g.state = ['keep'];
 	}),
 	keep: reqp(function(info, g, p) {
-		// Keep stuff
+		var ki = info.rest.split(' ').map(function(i) { return parseInt(i) - 1; })
+		  , k = []
+		  ;
+
+		for(var i = 0; i < ki.length; i++) {
+			k.push(g.lastRoll[ki[i]]);
+		}
+
+		var s = score(k);
+
+		if(s.hasZero) {
+			info.bot.say(info.to, 'You can only keep scoring dice!');
+			return;
+		}
+
+		g.runningTotal += s.total;
+		g.dice = g.lastRoll.length - k.length;
+		g.dice = g.dice === 0 ? 6 : g.dice;
 		g.state = ['ride', 'pass'];
+		info.bot.say(info.to, 'You kept ' + s.total + ' points.  Your running total is ' + g.runningTotal + '.  !ride or !pass');
 	}),
 	pass: reqp(function(info, g, p) {
+		if(!p.points && g.runningTotal < 750) {
+			info.bot.say(info.to, 'You need to break 750 first!');
+			return;
+		}
 		p.score += g.runningTotal;
 		p.farkle = 0;
-
+		
 		g.shift();
-		info.bot.say(info.to, info.from + ': The running total is ' + g.runningTotal + ' with ' + g.dice + ' dice.  !roll or !ride');
+		
+		// TODO: Change this so it turns cmds.pass into a special lastRound version
+		if(p.score >= g.limit && !g.lastRound) {
+			info.bot.say(info.to, p.nick + ' broke the limit with ' + p.score + '!  One more round to go!'
+			g.lastRound = g.order.slice();
+		}
+
+		info.bot.say(info.to, g.order[0] + ': The running total is ' + g.runningTotal + ' with ' + g.dice + ' dice.  !roll or !ride');
 		g.state = ['roll', 'ride'];
 	}),
 	ride: reqp(function(info, g, p) {
-		// Ride stuff
-		g.state = ['ride', 'pass'];
+		var r = roll(g.dice)
+		  , s = score(r)
+		  ;
+
+		info.bot.say(info.to, 'You rolled ' + r);
+
+		if(s.total === 0) {
+			g.farkle();
+			if(++p.farkle >= 3) {
+				p.score -= 500;
+				info.bot.say(info.to, 'Farkle!  You lost 500 points!');
+			} else {
+				info.bot.say(info.to, 'Farkle!');
+			}
+			info.bot.say(info.to, g.order[0] + ': You\'re up, !roll');
+			return;
+		}
+		
+		g.lastRoll = r;
+		g.state = ['keep'];
 	})
 }
 
@@ -180,4 +274,5 @@ var farklep = {
 	}
 };
 
-//module.exports = farklep;
+module.exports = farklep;
+module.exports.score = score;
