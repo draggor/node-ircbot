@@ -1,0 +1,24 @@
+{
+	"name" : "ircbot",
+	"version" : "0.0.1",
+	"description" : "A simple irc bot with a reloadable plugin system",
+	"main" : "./index.js",
+	"repository" : {
+		"type" : "git",
+		"url" : "http://github.com/draggor/node-ircbot.git"
+	},
+	"keywords" : [
+		"irc",
+		"bot",
+		"plugin"
+	],
+	"author" : {
+		"name" : "Draggor ZippyTanx",
+		"email" : "draggor@gmail.com",
+		"url" : "http://github.com/draggor/"
+	},
+	"dependencies" : {
+		"irc" : ">=0.1.2"
+	},
+	"license" : "GPLv3"
+}
