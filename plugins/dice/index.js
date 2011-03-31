@@ -2,26 +2,27 @@ var dice = require('./diceParser');
 
 var regex = /\[[\dd\+\*\-\/\.\(\)\s]*\]/g;
 
+function formatRoll(roll) {
+	return roll[0]
+	     + ' => '
+	     + roll[1][1]
+	     + ' => '
+	     + roll[1][0]
+	     ;
+}
+
 function parseLine(from, to, msg) {
 	var exprs = msg.match(regex);
 	if(exprs) {
 		var rolls = exprs.map(rollDice)
 		  , say = from + ': '
 		  ;
-		for(var i = 0; i < rolls.length; i++) {
-			say += rolls[i][0]
-			     + ' => '
-			     + rolls[i][1][1]
-			     + ' => '
-			     + rolls[i][1][0]
-			     + ' <|> '
-			     ;
+
+		say += formatRoll(rolls[0]);
+		for(var i = 1; i < rolls.length; i++) {
+			say += ', ' + formatRoll(rolls[i]);
 		}
-		if(to === dicep.bot.nick) {
-			dicep.bot.say(from, say);
-		} else {
-			dicep.bot.say(to, say);
-		}
+		dicep.bot.respond({from: from, to: to}, say);
 	}
 }
 

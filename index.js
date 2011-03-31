@@ -24,6 +24,16 @@ function bot(server, nick, options) {
 	this.listeners = {};
 }
 
+bot.prototype.respond = function(info, msg) {
+	if(info.to === this.nick) {
+		this.say(info.from, msg);
+	} else if(info.to[0] === '#' && info.to !== this.nick) {
+		this.say(info.to, msg);
+	} else {
+		console.log('ERROR on RESPOND: ' + info);
+	}
+};
+
 function sanitize(str) {
 	return str.replace(/\.\.\//g, '');
 }
@@ -146,7 +156,6 @@ bot.prototype.loadPlugin = function(name, options) {
 
 	this.plugins[cleanName] = pl;
 	this.addListeners(pl);
-	this.say('Plugin loaded: ' + name);
 };
 
 bot.prototype.unloadPlugin = function(name, options) {
@@ -160,7 +169,6 @@ bot.prototype.unloadPlugin = function(name, options) {
 	if(pl) {
 		this.removeListeners(pl);
 		delete this.plugins[cleanName];
-		this.say('Plugin unloaded: ' + name);
 	}
 };
 

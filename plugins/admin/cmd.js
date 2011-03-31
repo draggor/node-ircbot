@@ -14,6 +14,8 @@ function listArgsCommand(func, info) {
 	  , name = sp.shift()
 	  , args = {}
 	  ;
+
+	info.name = name;
 	
 	for(var i = 0; i < sp.length; i++) {
 		var arg = sp[i].split(':');
@@ -26,8 +28,10 @@ function listArgsCommand(func, info) {
 var cmds = {
 	load: function(info) {
 		listArgsCommand('loadPlugin', info);
+		info.bot.respond(info, 'Plugin loaded: ' + info.name);
 	},
 	unload: function(info) {
 		listArgsCommand('unloadPlugin', info);
+		info.bot.respond(info, 'Plugin unloaded: ' + info.name);
 	}
 };
