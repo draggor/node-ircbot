@@ -49,7 +49,7 @@ bot.prototype.addListeners = function(plugin) {
 		});
 	} else if (opt['!chan']) {
 		req.push(function(from, to, msg) {
-			return !~opt.chan.indexOf(to.toLowerCase());
+			return !~opt.['!chan'].indexOf(to.toLowerCase());
 		});
 	}
 	if(opt.nick) {
@@ -58,7 +58,7 @@ bot.prototype.addListeners = function(plugin) {
 		});
 	} else if (opt['!nick']) {
 		req.push(function(from, to, msg) {
-			return !~opt.nick.indexOf(from.toLowerCase());
+			return !~opt.['!nick'].indexOf(from.toLowerCase());
 		});
 	}
 	if(opt.chan || opt.nick || opt['!chan'] || opt['!nick']) {
