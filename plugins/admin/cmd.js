@@ -19,7 +19,11 @@ function listArgsCommand(func, info) {
 	
 	for(var i = 0; i < sp.length; i++) {
 		var arg = sp[i].split(':');
-		args[arg[0]] = arg[1].split(',');
+		if(arg.length > 1) {
+			args[arg[0]] = arg[1].split(',');
+		} else {
+			args[arg[0]] = [];
+		}
 	}
 
 	info.bot[func](name, args);

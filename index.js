@@ -43,6 +43,7 @@ function sanitize(str) {
 bot.prototype.addListeners = function(plugin) {
 	var opt = plugin.options
 	  , req = []
+	  , bot = this
 	  , reqf = function(listener) { return listener; }
 	  ;
 	if(opt.chan) {
@@ -50,18 +51,30 @@ bot.prototype.addListeners = function(plugin) {
 			return !!~opt.chan.indexOf(to.toLowerCase());
 		});
 	} else if (opt['!chan']) {
-		req.push(function(from, to, msg) {
-			return !~opt['!chan'].indexOf(to.toLowerCase());
-		});
+		if(opt['!chan'].length === 0) {
+			req.push(function(from, to, msg) {
+				return to === bot.nick;
+			});
+		} else {
+			req.push(function(from, to, msg) {
+				return !~opt['!chan'].indexOf(to.toLowerCase());
+			});
+		}
 	}
 	if(opt.nick) {
 		req.push(function(from, to, msg) {
 			return !!~opt.nick.indexOf(from.toLowerCase());
 		});
 	} else if (opt['!nick']) {
-		req.push(function(from, to, msg) {
-			return !~opt['!nick'].indexOf(from.toLowerCase());
-		});
+		if(opt['!nick'].length === 0) {
+			req.push(function(from, to, msg) {
+				return to !== bot.nick;
+			});
+		} else {
+			req.push(function(from, to, msg) {
+				return !~opt['!nick'].indexOf(from.toLowerCase());
+			});
+		}
 	}
 	if(opt.chan || opt.nick || opt['!chan'] || opt['!nick']) {
 		reqf = function(listener) {
