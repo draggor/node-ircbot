@@ -38,7 +38,7 @@ Game.prototype.farkle = function() {
 Game.prototype.end = function(info) {
 	var winner = this.winner();
 	
-	info.bot.say(info.to, winner[0] + ' is the winner with ' + winner[1].score + '!  GAME OVER!';
+	info.bot.say(info.to, winner[0] + ' is the winner with ' + winner[1].score + '!  GAME OVER!');
 	delete games[info.to];
 };
 
