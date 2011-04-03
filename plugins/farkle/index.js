@@ -261,7 +261,7 @@ var cmds = {
 			}
 		} else {
 			if(p.score >= g.limit && !g.lastRound) {
-				info.bot.say(info.to, p.nick + ' broke the limit with ' + p.score + '!  One more round to go!'
+				info.bot.say(info.to, p.nick + ' broke the limit with ' + p.score + '!  One more round to go!');
 				g.lastRound = g.order.slice();
 			}
 
