@@ -3,6 +3,7 @@
 	"version" : "0.0.1",
 	"description" : "A simple irc bot with a reloadable plugin system",
 	"main" : "./index.js",
+	"homepage" : "http://github.com/draggor/node-ircbot/",
 	"repository" : {
 		"type" : "git",
 		"url" : "http://github.com/draggor/node-ircbot.git"

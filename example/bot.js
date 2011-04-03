@@ -10,6 +10,7 @@ b = new bot('irc.freenode.net', 'nodeboy1184', {
 	port: 6667,
 	userName: 'nodeboy',
 	realName: 'nodeboy',
+	pluginsPath: '../plugins/',
 	debug: true,
 	secure: false,
 	channels: ['#farkle', '#dracolair']

@@ -1,12 +1,12 @@
 var util = require('../../util');
 
-Array.prototype.has = function(item) {
-	for(var i = 0; i < this.length; i++) {
-		if(this[i] === item) {
-			return i;
-		}
+Array.prototype.max = function(c) {
+	c = c || function(a, b) { return a > b; };
+	m = this[0];
+	for(var i = 1; i < this.length; i++) {
+		m = c(this[i], m);
 	}
-	return -1;
+	return m;
 };
 
 var games = {};
@@ -33,6 +33,22 @@ Game.prototype.farkle = function() {
 	this.shift();
 };
 
+
+
+Game.prototype.end = function(info) {
+	var winner = this.winner();
+	
+	info.bot.say(info.to, winner[0] + ' is the winner with ' + winner[1].score + '!  GAME OVER!';
+	delete games[info.to];
+};
+
+Game.prototype.winner = function() {
+	var g = this;
+	return g.order.map(function(k) { return [k, g.players[k]]; }).max(function(a, b) {
+		return a[1].score > b[1].score;
+	});
+};
+
 function Player(nick) {
 	this.nick = nick;
 	this.score = 0;
@@ -43,7 +59,7 @@ function Player(nick) {
 function req(func) {
 	return function(info) {
 		var game = games[info.to];
-		if(game && game.state.has(info.cmdstr) >= 0) {
+		if(game && !!~game.state.indexOf(info.cmdstr)) {
 			func(info, game);
 		}
 	};
@@ -52,7 +68,7 @@ function req(func) {
 function reqp(func) {
 	return function(info) {
 		var game = games[info.to];
-		if(game && game.state.has(info.cmdstr) >= 0 && game.order[0] === info.from) {
+		if(game && !!~game.state.indexOf(info.cmdstr) && game.order[0] === info.from) {
 			var player = game.players[game.order[0]];
 			func(info, game, player);
 		}
@@ -235,14 +251,23 @@ var cmds = {
 		
 		g.shift();
 		
-		// TODO: Change this so it turns cmds.pass into a special lastRound version
-		if(p.score >= g.limit && !g.lastRound) {
-			info.bot.say(info.to, p.nick + ' broke the limit with ' + p.score + '!  One more round to go!'
-			g.lastRound = g.order.slice();
-		}
+		if(g.lastRound) {
+			g.lastRound.shift();
+			if(g.lastRound.length === 0) {
+				g.end(info);
+			} else {
+				info.bot.say(info.to, g.order[0] + ': The running total is ' + g.runningTotal + ' with ' + g.dice + ' dice.  !roll or !ride');
+				g.state = ['roll', 'ride'];
+			}
+		} else {
+			if(p.score >= g.limit && !g.lastRound) {
+				info.bot.say(info.to, p.nick + ' broke the limit with ' + p.score + '!  One more round to go!'
+				g.lastRound = g.order.slice();
+			}
 
-		info.bot.say(info.to, g.order[0] + ': The running total is ' + g.runningTotal + ' with ' + g.dice + ' dice.  !roll or !ride');
-		g.state = ['roll', 'ride'];
+			info.bot.say(info.to, g.order[0] + ': The running total is ' + g.runningTotal + ' with ' + g.dice + ' dice.  !roll or !ride');
+			g.state = ['roll', 'ride'];
+		}
 	}),
 	ride: reqp(function(info, g, p) {
 		var r = roll(g.dice)

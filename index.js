@@ -1,5 +1,6 @@
 var irc = require('irc')
   , repl = require('repl')
+  , path = require('path')
   , util = require('./util')
   ;
 
@@ -18,6 +19,7 @@ function bot(server, nick, options) {
 	this.nick = nick;
 	this.options = options;
 	this.plugins = {};
+	this.pluginsPath = path.resolve(options.pluginsPath || './plugins') + '/' ;
 	this.throttle = options.throttle || 2000;
 	this.client = new irc.Client(server, nick, options);
 	this.say = util.throttle(irc.Client.prototype.say, this.throttle, this.client);
@@ -132,7 +134,7 @@ bot.prototype.getPlugin = function(name) {
 };
 
 bot.prototype.loadPlugin = function(name, options) {
-	var cleanName = './plugins/' + sanitize(name)
+	var cleanName = this.pluginsPath + sanitize(name)
 	  , full = require.resolve(cleanName)
 	  , pl = require.cache[full]
 	  ;
@@ -159,7 +161,7 @@ bot.prototype.loadPlugin = function(name, options) {
 };
 
 bot.prototype.unloadPlugin = function(name, options) {
-	var cleanName = './plugins/' + sanitize(name)
+	var cleanName = this.pluginsPath + sanitize(name)
 	  , pl = this.plugins[cleanName]
 	  ;
 	
