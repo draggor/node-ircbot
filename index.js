@@ -153,10 +153,10 @@ bot.prototype.loadPlugin = function(name, options) {
 	  ;
 
 	if(pl) {
-		delete require.cache[full];
 		for(var i in pl.reload) {
 			delete require.cache[pl.reload[i]];
 		}
+		delete require.cache[full];
 	}
 
 	if(this.plugins[cleanName]) {
