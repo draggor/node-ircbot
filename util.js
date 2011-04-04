@@ -77,6 +77,11 @@ exports.delayMap = function(items, callback, delay) {
 	return o;
 };
 
+/*
+ * Limit the execution of a function to once during a set interval,
+ * then queue up any invocations after the first.  A timeout object
+ * is returned so queued up invocations can be cleared out.
+ */
 exports.throttle = function (func, t, ctx) {
 	var timeout = false
 	  , queue = []
@@ -104,12 +109,67 @@ exports.throttle = function (func, t, ctx) {
 }
 
 /*
-var l = throttle(function(a, b) { console.log([a, b]); }, 1000);
+var l = exports.throttle(function(a, b) { console.log([a, b]); }, 1000);
 
 l('a', 1);
 l('b', 2);
 l('c', 3);
 setTimeout(function(){l('d', 4);}, 2000);
+*/
+
+/*
+ * Limit the execution of a function to once during a set interval,
+ * then queue up any invocations after the first.  A timeout object
+ * is returned so queued up invocations can be cleared out.
+ */
+exports.burstThrottle = function (func, b, bt, t, ctx) {
+	var timeout = false
+	  , bTimeout = false
+	  , burst = 0
+	  , queue = []
+	  , qf = function() {
+		  var q = queue.shift();
+		  if(q) { q(); timeout = setTimeout(qf, t); } else { timeout = false; }
+	  }
+	  ;
+	
+	var f = function() {
+		var args = arguments
+		  , i = function() {
+			func.apply(ctx, args);
+		};
+		if(timeout && timeout._idleNext) {
+			queue.push(i);
+		} else {
+			if(burst++ >= b) {
+				timeout = setTimeout(qf, t);
+				queue.push(i);
+			} else {
+				i();
+			}
+			if(!bTimeout) {
+				bTimeout = setTimeout(function() {
+					burst = 0;
+				}, bt);
+			}
+		}
+		return timeout;
+	};
+
+	return f;
+}
+
+
+/*
+var l = exports.burstThrottle(function(a, b) { console.log([a, b]); }, 3, 1000, 2000);
+
+l('a', 1);
+l('b', 2);
+l('c', 3);
+l('d', 4);
+l('e', 5);
+l('f', 6);
+setTimeout(function(){l('g', 7);}, 2000);
 */
 
 exports.split = function(str, separator, limit) {

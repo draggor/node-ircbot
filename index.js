@@ -12,13 +12,15 @@ function bot(server, nick, options) {
 	this.plugins = {};
 	this.pluginsPath = path.resolve(options.pluginsPath || './plugins') + '/' ;
 	this.throttle = options.throttle || 2000;
+	this.burstCount = options.burstCount || 5;
+	this.burstLimit = options.burstLimit || 1000;
 	this.client = new irc.Client(server, nick, options);
 	this.client.addListener('nick', function(oldNick, newNick, channels) {
 		if(oldnick === bot.nick) {
 			bot.nick = newNick;
 		}
 	});
-	this.say = util.throttle(irc.Client.prototype.say, this.throttle, this.client);
+	this.say = util.burstThrottle(irc.Client.prototype.say, this.burstCount, this.burstLimit, this.throttle, this.client);
 	this.listeners = {};
 }
 
