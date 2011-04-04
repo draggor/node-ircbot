@@ -33,8 +33,6 @@ Game.prototype.farkle = function() {
 	this.shift();
 };
 
-
-
 Game.prototype.end = function(info) {
 	var winner = this.winner();
 	
@@ -54,6 +52,26 @@ function Player(nick) {
 	this.score = 0;
 	this.farkle = 0;
 	this.points = false;
+}
+
+function updateNick(oldNick, newNick, channels) {
+	for(var i = 0; i < channels.length; i++) {
+		var g = games[channels[i]];
+		if(g) {
+			var pIndex = g.order.indexOf(oldNick);
+			if(!!~pIndex) {
+				var p = g.players[oldNick];
+				p.nick = newNick;
+				g.order[pIndex] = newNick;
+				if(g.lastRound) {
+					var lri = g.lastRound.indexOf(oldNick);
+					if(!!~lri) {
+						g.lastRound[lri] = newNick;
+					}
+				}
+			}
+		}
+	}
 }
 
 function req(func) {
@@ -295,7 +313,8 @@ var cmds = {
 
 var farklep = {
 	listeners: {
-		'message': parseLine
+		'message': parseLine,
+		'nick': updateNick
 	}
 };
 

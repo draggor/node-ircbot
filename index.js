@@ -4,17 +4,8 @@ var irc = require('irc')
   , util = require('./util')
   ;
 
-Array.prototype.has = function(item, c) {
-	c = c || function(a, b) { return a === b; };
-	for(var i = 0; i < this.length; i++) {
-		if(c(this[i], item)) {
-			return i;
-		}
-	}
-	return -1;
-};
-
 function bot(server, nick, options) {
+	var bot = this;
 	this.server = server;
 	this.nick = nick;
 	this.options = options;
@@ -22,6 +13,11 @@ function bot(server, nick, options) {
 	this.pluginsPath = path.resolve(options.pluginsPath || './plugins') + '/' ;
 	this.throttle = options.throttle || 2000;
 	this.client = new irc.Client(server, nick, options);
+	this.client.addListener('nick', function(oldNick, newNick, channels) {
+		if(oldnick === bot.nick) {
+			bot.nick = newNick;
+		}
+	});
 	this.say = util.throttle(irc.Client.prototype.say, this.throttle, this.client);
 	this.listeners = {};
 }
@@ -90,13 +86,13 @@ bot.prototype.addListeners = function(plugin) {
 		if(typeof listener === 'function') {
 			var f = reqf(listener);
 			this.listeners[opt.prefix + i] = f;
-			this.modifyListener(i, f, 'add');
+			this.client.addListener(i, f);
 		} else {
 			for(var j in listener) {
 				var f = reqf(listener[j]);
 				this.listeners[opt.prefix + i] = this.listeners[opt.prefix + i] || [];
 				this.listeners[opt.prefix + i].push(f);
-				this.modifyListener(i, f, 'add');
+				this.client.addListener(i, f);
 			}
 		}
 	}
@@ -106,10 +102,10 @@ bot.prototype.removeListeners = function(plugin) {
 	for(var i in plugin.listeners) {
 		var listener = this.listeners[plugin.options.prefix + i];
 		if(typeof listener === 'function') {
-			this.modifyListener(i, listener, 'remove');
+			this.client.removeListener(i, listener);
 		} else {
 			for(var j in listener) {
-				this.modifyListener(i, listener[j], 'remove');
+				this.client.removeListener(i, listener[j]);
 			}
 		}
 		delete this.listeners[plugin.options.prefix + i];
@@ -123,18 +119,6 @@ bot.prototype.chanListener = function(func) {
 			func(from, to, msg);
 		}
 	};
-};
-
-bot.prototype.modifyListener = function(name, func, mod) {
-	mod += 'Listener';
-	switch(name) {
-		case 'message':
-			this.client[mod]('message', func);
-			break;
-		case 'pm':
-			this.client[mod]('pm', func);
-			break;
-	}
 };
 
 bot.prototype.getPlugin = function(name) {
