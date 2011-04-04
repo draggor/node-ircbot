@@ -4,8 +4,6 @@ exports.run = function(info) {
 	var cmd = cmds[info.cmdstr];
 	if(cmd) {
 		cmd(info);
-	} else {
-		console.log('Plugin<admin>: COMMAND NOT FOUND: ' + info.cmdstr);
 	}
 };
 
