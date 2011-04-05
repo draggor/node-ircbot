@@ -225,10 +225,21 @@ var cmds = {
 		if(s.total === 0) {
 			g.farkle();
 			if(++p.farkle >= 3) {
-				p.score -= 500;
-				info.bot.say(info.to, 'Six die farkle!  Order is reversed!  You lost 500 points!');
+				if(p.points) {
+					p.score -= 500;
+					info.bot.say(info.to, 'Six die farkle!  Order is reversed!  You lost 500 points!');
+				} else {
+					info.bot.say(info.to, 'Six die farkle!  Order is reversed!');
+				}
 			} else {
 				info.bot.say(info.to, 'Six die farkle!  Order is reversed!');
+			}
+			if(g.lastRound) {
+				g.lastRound.shift();
+				if(g.lastRound.length === 0) {
+					g.end(info);
+					return;
+				}
 			}
 			info.bot.say(info.to, g.order[0] + ': You\'re up, !roll');
 			return;
@@ -266,6 +277,7 @@ var cmds = {
 		}
 		p.score += g.runningTotal;
 		p.farkle = 0;
+		p.points = true;
 		
 		g.shift();
 		
@@ -296,11 +308,18 @@ var cmds = {
 
 		if(s.total === 0) {
 			g.farkle();
-			if(++p.farkle >= 3) {
+			if(++p.farkle >= 3 && p.points) {
 				p.score -= 500;
 				info.bot.say(info.to, 'Farkle!  You lost 500 points!');
 			} else {
 				info.bot.say(info.to, 'Farkle!');
+			}
+			if(g.lastRound) {
+				g.lastRound.shift();
+				if(g.lastRound.length === 0) {
+					g.end(info);
+					return;
+				}
 			}
 			info.bot.say(info.to, g.order[0] + ': You\'re up, !roll');
 			return;
