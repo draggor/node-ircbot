@@ -1,7 +1,7 @@
 var util = require('../../util');
 
 Array.prototype.max = function(c) {
-	c = c || function(a, b) { return a > b; };
+	c = c || function(a, b) { return a > b ? a : b; };
 	m = this[0];
 	for(var i = 1; i < this.length; i++) {
 		m = c(this[i], m);
@@ -42,8 +42,8 @@ Game.prototype.end = function(info) {
 
 Game.prototype.winner = function() {
 	var g = this;
-	return g.order.map(function(k) { return [k, g.players[k]]; }).max(function(a, b) {
-		return a[1].score > b[1].score;
+	return Object.keys(g.players).map(function(k) { return [k, g.players[k]]; }).max(function(a, b) {
+		return a[1].score > b[1].score ? a : b;
 	});
 };
 
@@ -220,7 +220,7 @@ var cmds = {
 		  , s = score(r)
 		  ;
 		
-		info.bot.say(info.to, 'You rolled ' + r + '.  !keep some dice');
+		info.bot.say(info.to, 'You rolled: ' + r.join(' ') + '.  !keep some dice');
 
 		if(s.total === 0) {
 			g.farkle();
@@ -304,7 +304,7 @@ var cmds = {
 		  , s = score(r)
 		  ;
 
-		info.bot.say(info.to, 'You rolled ' + r);
+		info.bot.say(info.to, 'You rolled: ' + r.join(' '));
 
 		if(s.total === 0) {
 			g.farkle();

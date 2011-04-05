@@ -77,7 +77,7 @@ bot.prototype.addListeners = function(plugin) {
 	if(opt.chan || opt.nick || opt['!chan'] || opt['!nick']) {
 		reqf = function(listener) {
 			return function(from, to, msg) {
-				if(!!~req.map(function(f) { return f(from, to, msg); }).indexOf(true)) {
+				if(!~req.map(function(f) { return f(from, to, msg); }).indexOf(false)) {
 					listener(from, to, msg);
 				}
 			};
@@ -139,8 +139,8 @@ bot.prototype.loadPlugin = function(name, options) {
 	  ;
 
 	if(pl) {
-		for(var i in pl.reload) {
-			delete require.cache[pl.reload[i]];
+		for(var i in pl.exports.reload) {
+			delete require.cache[pl.exports.reload[i]];
 		}
 		delete require.cache[full];
 	}

@@ -76,13 +76,33 @@ function objOp(op, a, b) {
 		return a;
 	} else if(typeof a === 'number' && typeof b === 'object') {
 		b[0] = op(a, b[0]);
-		b[1].push(a);
+		b[1].unshift(a);
 		return b;
 	} else if(typeof a === 'number' && typeof b === 'number') {
 		return [op(a, b), [a, b]];
 	}
 }
 
+function diceOp(a, b) {
+	if(typeof a === 'object' && typeof b === 'number') {
+		d = dice(a[0], b);
+		a[0] = d[0];
+		a[1] = a[1].concat(d[1]);
+		return a;
+	} else if(typeof a === 'object' && typeof b === 'object') {
+		d = dice(a[0], b[0]);
+		a[0] = d[0];
+		a[1] = a[1].concat(d[1]).concat(b[1]);
+		return a;
+	} else if(typeof a === 'number' && typeof b === 'object') {
+		d = dice(a, b[0]);
+		b[0] = d[0];
+		b[1] = d[1].concat(b[1]);
+		return b;
+	} else if(typeof a === 'number' && typeof b === 'number') {
+		return dice(a, b);
+	}
+}
 function add(a, b) {
 	return a + b;
 }
@@ -100,8 +120,8 @@ function div(a, b) {
 }
 
 var OPS = {
-	'd': dice,
-	'D': dice,
+	'd': diceOp,
+	'D': diceOp,
 	'+': function(a, b) { return objOp(add, a, b); },
 	'-': function(a, b) { return objOp(sub, a, b); },
 	'*': function(a, b) { return objOp(mul, a, b); },
