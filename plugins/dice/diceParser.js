@@ -66,21 +66,23 @@ function dice(a, b) {
 }
 
 function objOp(op, a, b) {
-	if(typeof a === 'object' && typeof b === 'number') {
-		a[0] = op(a[0], b);
-		a[1].push(b);
-		return a;
-	} else if(typeof a === 'object' && typeof b === 'object') {
-		a[0] = op(a[0], b[0]);
-		a[1] = a[1].concat(b[1]);
-		return a;
-	} else if(typeof a === 'number' && typeof b === 'object') {
-		b[0] = op(a, b[0]);
-		b[1].unshift(a);
-		return b;
-	} else if(typeof a === 'number' && typeof b === 'number') {
-		return [op(a, b), [a, b]];
-	}
+	return function(a, b) {
+		if(typeof a === 'object' && typeof b === 'number') {
+			a[0] = op(a[0], b);
+			a[1].push(b);
+			return a;
+		} else if(typeof a === 'object' && typeof b === 'object') {
+			a[0] = op(a[0], b[0]);
+			a[1] = a[1].concat(b[1]);
+			return a;
+		} else if(typeof a === 'number' && typeof b === 'object') {
+			b[0] = op(a, b[0]);
+			b[1].unshift(a);
+			return b;
+		} else if(typeof a === 'number' && typeof b === 'number') {
+			return [op(a, b), [a, b]];
+		}
+	};
 }
 
 function diceOp(a, b) {
@@ -122,8 +124,8 @@ function div(a, b) {
 var OPS = {
 	'd': diceOp,
 	'D': diceOp,
-	'+': function(a, b) { return objOp(add, a, b); },
-	'-': function(a, b) { return objOp(sub, a, b); },
-	'*': function(a, b) { return objOp(mul, a, b); },
-	'/': function(a, b) { return objOp(div, a, b); }
+	'+': objOp(add, a, b),
+	'-': objOp(sub, a, b),
+	'*': objOp(mul, a, b),
+	'/': objOp(div, a, b)
 };
