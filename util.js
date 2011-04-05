@@ -150,6 +150,7 @@ exports.burstThrottle = function (func, b, bt, t, ctx) {
 			if(!bTimeout) {
 				bTimeout = setTimeout(function() {
 					burst = 0;
+					bTimeout = false;
 				}, bt);
 			}
 		}
@@ -158,7 +159,6 @@ exports.burstThrottle = function (func, b, bt, t, ctx) {
 
 	return f;
 }
-
 
 /*
 var l = exports.burstThrottle(function(a, b) { console.log([a, b]); }, 3, 1000, 2000);
@@ -169,7 +169,14 @@ l('c', 3);
 l('d', 4);
 l('e', 5);
 l('f', 6);
-setTimeout(function(){l('g', 7);}, 2000);
+setTimeout(function(){
+	l('g', 7);
+	l('h', 8);
+	l('i', 9);
+	l('j', 10);
+	l('k', 11);
+	l('l', 12);
+}, 12000);
 */
 
 exports.split = function(str, separator, limit) {
