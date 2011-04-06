@@ -65,16 +65,23 @@ bot.prototype.addListeners = function(plugin) {
 		});
 	} else if (opt['!nick']) {
 		if(opt['!nick'].length === 0) {
+			/* This is now moved to !pm
 			req.push(function(from, to, msg) {
 				return to !== bot.nick;
 			});
+			*/
 		} else {
 			req.push(function(from, to, msg) {
 				return !~opt['!nick'].indexOf(from.toLowerCase());
 			});
 		}
 	}
-	if(opt.chan || opt.nick || opt['!chan'] || opt['!nick']) {
+	if(opt['!pm']) {
+		req.push(function(from, to, msg) {
+			return to !== bot.nick;
+		});
+	}
+	if(opt.chan || opt.nick || opt['!chan'] || opt['!nick'] || opt['!pm']) {
 		reqf = function(listener) {
 			return function(from, to, msg) {
 				if(!~req.map(function(f) { return f(from, to, msg); }).indexOf(false)) {

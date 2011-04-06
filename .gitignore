@@ -6,3 +6,4 @@ edit
 .*.swp
 
 # Paths
+.node_modules/

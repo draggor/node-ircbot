@@ -101,7 +101,7 @@ function parseLine(from, to, msg) {
 			  to: to,
 			  msg: msg,
 			  cmdstr: sp[0].substr(1),
-			  rest: sp[1] ? sp[1].trim() : sp[1],
+			  rest: sp[1] ? sp[1].trim() : '',
 			  bot: farklep.bot
 		  }
 		  ;
@@ -327,13 +327,47 @@ var cmds = {
 		
 		g.lastRoll = r;
 		g.state = ['keep'];
-	})
+	}),
+	score: function(info) {
+		var roll = info.rest.split(' ');
+
+		if(roll !== '' && roll.length <= 6) {
+			var s = score(roll);
+			info.bot.say(info.to, info.from + ': ' + info.rest + ' => ' + s.total);
+		} else {
+			info.bot.say(info.to, 'A roll is between one and six dice, not ' + roll.length + '!');
+		}
+	},
+	help: function(info) {
+		if(info.rest.length === 0) {
+			info.bot.say(info.to, info.from + ': Available topics: help, score, ride, roll, keep, pass, new, join, start.  Usage:  !help <topic>');
+		} else {
+			var helpStr = help[info.rest.toLowerCase()];
+			if(helpStr) {
+				info.bot.say(info.to, info.from + ': ' + helpStr);
+			} else {
+				info.bot.say(info.to, info.from + ': ' + 'I don\'t have a topic for: ' + info.rest);
+			}
+		}
+	}
 }
+
+var help = {
+	help: 'Are you looking for a self help course?',
+	score: 'See how a particular roll is scored.  Takes between one and six numbers between 1 and 6.  Sample usage: !score 2 3 4 3 5 1',
+	ride: 'Ride the current running total by rolling the remaining dice.  You ride after one of your own rolls or rides, or after another player passes to you.  Sample usage: !ride',
+	roll: 'Roll a fresh set of six dice.  You do this if you don\'t want to ride someone else\'s dice, or when there is nothing to ride.  Sample usage: !roll',
+	keep: 'Pick which scoring dice you want to keep by passing the indexes of the dice, starting with 1.  You can only keep scoring dice.  If given the roll 2 3 4 5 6 1, and you !keep 2 6, this will not work because the 3 yields no points.  Sample usage: !keep 1 3 4 (this will keep the first, third, and fourth dice, not dice with values 1, 3, 4)',
+	pass: 'Add the current running total to your score, reset your farkles, and pass the remaining dice to the next player.  If you haven\'t scored any points yet, you must accumulate at least 750 points before being able to pass.  Sample usage: !pass',
+	new: 'Start a new game with an optional limit.  If the limit isn\'t specified, a default of 10,000 is used.  Sample usage: !new 4000',
+	join: 'Join a new game as long as it hasn\'t started yet.  Sample usage: !join',
+	start: 'Start a game as long as it has two or more players.  Sample usage: !start'
+};
 
 var farklep = {
 	listeners: {
-		'message': parseLine,
-		'nick': updateNick
+		message: parseLine,
+		nick: updateNick
 	}
 };
 

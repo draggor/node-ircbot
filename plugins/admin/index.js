@@ -21,7 +21,7 @@ function parseLine(from, to, msg) {
 
 var adminp = {
 	listeners: {
-		'message': parseLine
+		message: parseLine
 	},
 	reload: ['./cmd'].map(require.resolve)
 };

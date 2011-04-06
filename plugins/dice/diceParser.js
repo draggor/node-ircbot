@@ -65,7 +65,7 @@ function dice(a, b) {
 	return sum;
 }
 
-function objOp(op, a, b) {
+function objOp(op) {
 	return function(a, b) {
 		if(typeof a === 'object' && typeof b === 'number') {
 			a[0] = op(a[0], b);
@@ -124,8 +124,8 @@ function div(a, b) {
 var OPS = {
 	'd': diceOp,
 	'D': diceOp,
-	'+': objOp(add, a, b),
-	'-': objOp(sub, a, b),
-	'*': objOp(mul, a, b),
-	'/': objOp(div, a, b)
+	'+': objOp(add),
+	'-': objOp(sub),
+	'*': objOp(mul),
+	'/': objOp(div)
 };

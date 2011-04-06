@@ -32,7 +32,7 @@ function rollDice(expr) {
 
 var dicep = {
 	listeners: {
-		'message': parseLine
+		message: parseLine
 	},
 	reload: ['./diceParser'].map(require.resolve)
 };
