@@ -4,7 +4,7 @@ NodeJS IRC bot with plugin support
 How to get it
 -------------
 
-`npm install ircbot`
+	npm install ircbot
 
 Or you can clone this repo.
 
@@ -19,7 +19,7 @@ Plugins
 admin
 -----
 
-This plugin provides an interface for dealing with the bot via irc.  It provides two main commands currently: !load and !unload.  Both take a plugin name, and then a combination of allow/deny parameters for channels/nicks.
+This plugin provides an interface for dealing with the bot via irc.  It provides two main commands currently: `!load` and `!unload`.  Both take a plugin name, and then a combination of allow/deny parameters for channels/nicks.
 
 If you wanted to run the dice plugin on #chan1 and #chan2, and not reply to PMs, do:
 
@@ -41,7 +41,7 @@ If you want to block all PMs and block Joe from using the dice plugin in a chan,
 
 	!load dice !nick:Joe !pm
 
-If chan and !chan, or nick and !nick are found, the allow versions override the deny versions.  If no allow/deny parameters are specified, it will respond to all channel messages and all PMs.
+If `chan` and `!chan`, or `nick` and `!nick` are found, the allow versions override the deny versions.  If no allow/deny parameters are specified, it will respond to all channel messages and all PMs.
 
 dice
 ----
@@ -56,6 +56,6 @@ For example:
 farkle
 ------
 
-This plugin will allow one game of farkle per channel.  When loaded, you should use !nick to block out PM use of this plugin (this is likely to be fixed in a future version).
+This plugin will allow one game of farkle per channel.  When loaded, you should use the `!pm` option to block out PM use of this plugin (this is likely to be fixed in a future version).
 
-use !help to learn more about this plugin.
+use `!help` to learn more about this plugin.
