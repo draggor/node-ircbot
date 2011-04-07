@@ -4,14 +4,14 @@ NodeJS IRC bot with plugin support
 How to get it
 -------------
 
-npm install ircbot
+`npm install ircbot`
 
 Or you can clone this repo.
 
 How to use it
 -------------
 
-Check out example/bot.js for creating an instance of the bot.
+Check out `example/bot.js` for creating an instance of the bot.
 
 Plugins
 =======
