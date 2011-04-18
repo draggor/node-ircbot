@@ -361,7 +361,8 @@ var help = {
 	pass: 'Add the current running total to your score, reset your farkles, and pass the remaining dice to the next player.  If you haven\'t scored any points yet, you must accumulate at least 750 points before being able to pass.  Sample usage: !pass',
 	new: 'Start a new game with an optional limit.  If the limit isn\'t specified, a default of 10,000 is used.  Sample usage: !new 4000',
 	join: 'Join a new game as long as it hasn\'t started yet.  Sample usage: !join',
-	start: 'Start a game as long as it has two or more players.  Sample usage: !start'
+	start: 'Start a game as long as it has two or more players.  Sample usage: !start',
+	source: 'https://github.com/draggor/node-ircbot/blob/master/plugins/farkle/index.js'
 };
 
 var farklep = {

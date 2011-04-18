@@ -90,6 +90,7 @@ bot.prototype.addListeners = function(plugin) {
 			};
 		};
 	}
+	opt.req = req;
 	for(var i in plugin.listeners) {
 		var listener = plugin.listeners[i];
 		if(typeof listener === 'function') {
