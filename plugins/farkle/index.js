@@ -340,7 +340,7 @@ var cmds = {
 	},
 	help: function(info) {
 		if(info.rest.length === 0) {
-			info.bot.say(info.to, info.from + ': Available topics: help, score, ride, roll, keep, pass, new, join, start.  Usage:  !help <topic>');
+			info.bot.say(info.to, info.from + ': ' + Object.keys(help).join(', ') + '.  Usage:  !help <topic>');
 		} else {
 			var helpStr = help[info.rest.toLowerCase()];
 			if(helpStr) {
