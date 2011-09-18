@@ -16,7 +16,7 @@ function bot(server, nick, options) {
 	this.burstLimit = options.burstLimit || 1000;
 	this.client = new irc.Client(server, nick, options);
 	this.client.addListener('nick', function(oldNick, newNick, channels) {
-		if(oldnick === bot.nick) {
+		if(oldNick === bot.nick) {
 			bot.nick = newNick;
 		}
 	});
