@@ -16,7 +16,7 @@ function bot(server, nick, options) {
 	this.burstLimit = options.burstLimit || 1000;
 	this.client = new irc.Client(server, nick, options);
 	this.client.addListener('nick', function(oldNick, newNick, channels) {
-		if(oldnick === bot.nick) {
+		if(oldNick === bot.nick) {
 			bot.nick = newNick;
 		}
 	});
@@ -165,12 +165,20 @@ bot.prototype.loadPlugin = function(name, options) {
 
 	this.plugins[cleanName] = pl;
 	this.addListeners(pl);
+	
+	if (pl.initPlugin) {
+		pl.initPlugin();
+	}
 };
 
 bot.prototype.unloadPlugin = function(name, options) {
 	var cleanName = this.pluginsPath + sanitize(name)
 	  , pl = this.plugins[cleanName]
 	  ;
+	
+	if (pl.teardownPlugin) {
+		pl.teardownPlugin();
+	}
 	
 	pl.options = options || {};
 	pl.options.prefix = name;
