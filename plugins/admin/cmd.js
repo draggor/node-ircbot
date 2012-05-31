@@ -1,4 +1,6 @@
-var util = require('../../util');
+var util = require('../../util')
+  , format = require('util').format
+  ;
 
 exports.run = function(info) {
 	var cmd = cmds[info.cmdstr];
@@ -7,7 +9,7 @@ exports.run = function(info) {
 	}
 };
 
-function listArgsCommand(func, info) {
+function listArgsCommand(func, info, formatStr) {
 	var sp = info.rest.toLowerCase().split(' ')
 	  , name = sp.shift()
 	  , args = {}
@@ -24,16 +26,19 @@ function listArgsCommand(func, info) {
 		}
 	}
 
-	info.bot[func](name, args);
+	try {
+		info.bot[func](name, args);
+		info.bot.respond(info, format(formatStr, info.name));
+	} catch (err) {
+		info.bot.respond(info, err);
+	}
 }
 
 var cmds = {
 	load: function(info) {
-		listArgsCommand('loadPlugin', info);
-		info.bot.respond(info, 'Plugin loaded: ' + info.name);
+		listArgsCommand('loadPlugin', info, 'Plugin loaded: %s');
 	},
 	unload: function(info) {
-		listArgsCommand('unloadPlugin', info);
-		info.bot.respond(info, 'Plugin unloaded: ' + info.name);
+		listArgsCommand('unloadPlugin', info, 'Plugin unloaded: %s');
 	}
 };

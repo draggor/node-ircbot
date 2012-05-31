@@ -18,6 +18,13 @@ exports.latch = function (actions, callback) {
 	});
 };
 
+/*
+ * A unique ID counter starting from 0.
+ * reset is anything that could be boolean true,
+ * will return 0, and set the internal count to 1
+ * just as iff getUniqueId() had been called the
+ * first time.
+ */
 exports.getUniqueId = (function() {
 	var id = 0;
 	return function(reset) {
@@ -30,6 +37,11 @@ exports.getUniqueId = (function() {
 	};
 })();
 
+/*
+ * Same as getUniqueId, except it maintains a
+ * map of counters via a string prefix.  Resets
+ * only happen for the given prefix.
+ */
 exports.getUniquePrefixId = (function() {
 	var ids = {};
 	return function(prefix, reset) {

@@ -20,6 +20,9 @@ function bot(server, nick, options) {
 			bot.nick = newNick;
 		}
 	});
+	this.client.addListener('raw', function(msg) {
+		console.log(msg);
+	});
 	this.say = util.burstThrottle(irc.Client.prototype.say, this.burstCount, this.burstLimit, this.throttle, this.client);
 	this.listeners = {};
 }
@@ -175,15 +178,15 @@ bot.prototype.unloadPlugin = function(name, options) {
 	var cleanName = this.pluginsPath + sanitize(name)
 	  , pl = this.plugins[cleanName]
 	  ;
-	
-	if (pl.teardownPlugin) {
-		pl.teardownPlugin();
-	}
-	
-	pl.options = options || {};
-	pl.options.prefix = name;
 
-	if(pl) {
+	if (pl) {
+		if (pl.teardownPlugin) {
+			pl.teardownPlugin();
+		}
+	
+		pl.options = options || {};
+		pl.options.prefix = name;
+
 		this.removeListeners(pl);
 		delete this.plugins[cleanName];
 	}

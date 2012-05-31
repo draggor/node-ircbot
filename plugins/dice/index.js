@@ -3,12 +3,7 @@ var dice = require('./diceParser');
 var regex = /\[[\dd\+\*\-\/\.\(\)\s]*\]/g;
 
 function formatRoll(roll) {
-	return roll[0]
-	     + ' => '
-	     + roll[1][1]
-	     + ' => '
-	     + roll[1][0]
-	     ;
+	return roll[0] + ' => ' + (typeof roll === 'number' ? roll : roll[1][1]) + ' => ' + (typeof roll === 'number' ? roll : roll[1][0]);
 }
 
 function parseLine(from, to, msg) {

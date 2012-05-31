@@ -1,4 +1,6 @@
-var util = require('../../util');
+var util = require('../../util')
+  , db = require('chaos')('./db/')
+  ;
 
 Array.prototype.max = function(c) {
 	c = c || function(a, b) { return a > b ? a : b; };
