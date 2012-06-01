@@ -186,6 +186,8 @@ bot.prototype.unloadPlugin = function(name, options) {
 
 		this.removeListeners(pl);
 		delete this.plugins[cleanName];
+	} else {
+		throw 'Plugin not found: ' + name;
 	}
 };
 
