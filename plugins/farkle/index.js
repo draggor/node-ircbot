@@ -357,6 +357,7 @@ var cmds = {
 var help = {
 	help: 'Are you looking for a self help course?',
 	score: 'See how a particular roll is scored.  Takes between one and six numbers between 1 and 6.  Sample usage: !score 2 3 4 3 5 1',
+	info: 'Check out someone\'s score.  Sample usage: !info Draggor',
 	ride: 'Ride the current running total by rolling the remaining dice.  You ride after one of your own rolls or rides, or after another player passes to you.  Sample usage: !ride',
 	roll: 'Roll a fresh set of six dice.  You do this if you don\'t want to ride someone else\'s dice, or when there is nothing to ride.  Sample usage: !roll',
 	keep: 'Pick which scoring dice you want to keep by passing the indexes of the dice, starting with 1.  You can only keep scoring dice.  If given the roll 2 3 4 5 6 1, and you !keep 2 6, this will not work because the 3 yields no points.  Sample usage: !keep 1 3 4 (this will keep the first, third, and fourth dice, not dice with values 1, 3, 4)',

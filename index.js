@@ -20,9 +20,6 @@ function bot(server, nick, options) {
 			bot.nick = newNick;
 		}
 	});
-	this.client.addListener('raw', function(msg) {
-		console.log(msg);
-	});
 	this.say = util.burstThrottle(irc.Client.prototype.say, this.burstCount, this.burstLimit, this.throttle, this.client);
 	this.listeners = {};
 }
