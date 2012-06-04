@@ -20,6 +20,11 @@ function bot(server, nick, options) {
 			bot.nick = newNick;
 		}
 	});
+	if(options.logRaw) {
+		this.client.addListener('raw', function(message) {
+			console.log(message);
+		});
+	}
 	this.say = util.burstThrottle(irc.Client.prototype.say, this.burstCount, this.burstLimit, this.throttle, this.client);
 	this.listeners = {};
 }
@@ -46,7 +51,8 @@ bot.prototype.addListeners = function(plugin) {
 	  ;
 	if(opt.chan) {
 		req.push(function(from, to, msg) {
-			return !!~opt.chan.indexOf(to.toLowerCase());
+			// This tests to see if the message is going to a chan, if so, check the list, otherwise let it pass
+			return to[0] === '#' ? !!~opt.chan.indexOf(to.toLowerCase()) : true;
 		});
 	} else if (opt['!chan']) {
 		if(opt['!chan'].length === 0) {
@@ -132,9 +138,8 @@ bot.prototype.chanListener = function(func) {
 };
 
 bot.prototype.getPlugin = function(name) {
-	var cleanName = './plugins' + sanitize(name)
-	  , full = require.resolve(cleanName)
-	  , pl = require.cache[full]
+	var cleanName = this.pluginsPath + sanitize(name)
+	  , pl = this.plugins[cleanName]
 	  ;
 	
 	return pl;
@@ -161,7 +166,7 @@ bot.prototype.loadPlugin = function(name, options) {
 	pl.options = options || {};
 	pl.options.prefix = name;
 	pl.bot = this;
-
+	pl.cmdPrefix = options.cmdprefix && options.cmdprefix[0] ? options.cmdprefix[0] : '!';
 
 	this.plugins[cleanName] = pl;
 	this.addListeners(pl);
@@ -186,6 +191,23 @@ bot.prototype.unloadPlugin = function(name, options) {
 
 		this.removeListeners(pl);
 		delete this.plugins[cleanName];
+	} else {
+		throw 'Plugin not found: ' + name;
+	}
+};
+
+bot.prototype.changePermissions = function(name, options) {
+	var cleanName = this.pluginsPath + sanitize(name)
+	  , pl = this.plugins[cleanName]
+	  ;
+
+	if(pl) {
+		pl.options = pl.options || {};
+		pl.options.prefix = name;
+		this.removeListeners(pl);
+		pl.options = options || {};
+		pl.options.prefix = name;
+		this.addListeners(pl);
 	} else {
 		throw 'Plugin not found: ' + name;
 	}

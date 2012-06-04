@@ -10,9 +10,11 @@ b = new bot('irc.furnet.org', 'nodeboy1184', {
 	port: 6667,
 	userName: 'nodeboy',
 	realName: 'nodeboy',
+	autorejoin: true,
 	pluginsPath: '../plugins/',
 	debug: true,
 	secure: false,
+	logRaw: true,
 	channels: ['#turtleshell']
 });
 

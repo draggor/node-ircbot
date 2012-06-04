@@ -3,7 +3,7 @@ var commands = require('./cmd')
   ;
 
 function parseLine(from, to, msg) {
-	if(msg[0] === '!') {
+	if(msg[0] === adminp.cmdPrefix) {
 		var sp = util.split(msg, ' ', 2)
 		  , info = {
 			  from: from,

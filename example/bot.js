@@ -17,7 +17,7 @@ b = new bot('irc.freenode.net', 'nodeboy1184', {
 	channels: ['#farkle', '#dracolair']
 });
 
-b.loadPlugin('admin', {nick: ['draggor']});
+b.loadPlugin('admin', {nick: ['draggor'], cmdprefix:';'});
 //b.loadPlugin('dice');
 
 var r = repl.start();

@@ -96,7 +96,7 @@ function reqp(func) {
 }
 
 function parseLine(from, to, msg) {
-	if(msg[0] === '!') {
+	if(msg[0] === farklep.cmdPrefix) {
 		var sp = util.split(msg, ' ', 2)
 		  , info = {
 			  from: from,
