@@ -122,3 +122,28 @@ farkle
 This plugin will allow one game of farkle per channel.  When loaded, you should use the `!pm` option to block out PM use of this plugin (this is likely to be fixed in a future version).
 
 use `!help` to learn more about this plugin.
+
+sw
+--
+
+This is a Savage Worlds plugin that provides commands to help with that RPG system.  It has the following commands: `card`, `init`, `initshuffle`, `draw`, `shuffle`.
+
+### card
+
+This command will display a randomly selected card from a standard deck, including jokers.  Cards are in the format of VS, where V is the value selected from A,2,3,4,5,6,7,8,9,T,J,Q,K,A and S is a suit from D,H,C,S (Diamonds, Hearts, Clubs, Spades).  Jokers are special, in that the red and black ones are JR and JB respectively.
+
+### init
+
+This will draw one card off of the shared initiative deck.  When it runs out it will automatically shuffle.
+
+### initshuffle
+
+This will force the shared initiative deck to shuffle.
+
+### draw
+
+This command without any arguments will draw one card off of your personal deck, which is tied to your current nick.  Optionally you may pass in a number of cards to be drawn.  If the cards to be drawn are greater than the number of cards left, it will shuffle first, and then draw.
+
+### shuffle
+
+This command will shuffle the personal deck that is tied to your current nick.
