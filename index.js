@@ -163,7 +163,10 @@ bot.prototype.loadPlugin = function(name, options) {
 	}
 
 	pl = require(full);
-	pl.options = options || {};
+	pl.options = pl.defaultOptions || {};
+	for(var k in options) {
+		pl.options[k] = options[k];
+	}
 	pl.options.prefix = name;
 	pl.bot = this;
 	pl.cmdPrefix = options.cmdprefix && options.cmdprefix[0] ? options.cmdprefix[0] : '!';

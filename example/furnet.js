@@ -14,7 +14,7 @@ b = new bot('irc.furnet.org', 'nodeboy1184', {
 	pluginsPath: '../plugins/',
 	debug: true,
 	secure: false,
-	logRaw: true,
+	//logRaw: true,
 	channels: ['#turtleshell']
 });
 

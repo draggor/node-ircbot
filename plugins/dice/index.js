@@ -1,9 +1,15 @@
 var dice = require('./diceParser');
 
-var regex = /\[[\dd\+\*\-\/\.\(\)\s]*\]/g;
+var regex = /\[[\ddDeE\+\*\-\/\.\(\)\s]*\]/g;
 
 function formatRoll(roll) {
-	return roll[0] + ' => ' + (typeof roll === 'number' ? roll : roll[1][1]) + ' => ' + (typeof roll === 'number' ? roll : roll[1][0]);
+	if(typeof roll[1] === 'string') {
+		return roll[0] + ' failed: ' + roll[1];
+	} else {
+		//return roll[0] + ' => ' + (typeof roll[1] === 'number' ? roll[1] : roll[1][1]) + ' => ' + (typeof roll[1] === 'number' ? roll[1] : roll[1][0]);
+		return roll[0] + ' => ' + roll[1][1] + ' => ' + roll[1][0];
+	}
+
 }
 
 function parseLine(from, to, msg) {
@@ -22,14 +28,24 @@ function parseLine(from, to, msg) {
 }
 
 function rollDice(expr) {
-	return [expr, dice(expr)];
+	try {
+		return [expr, dice(expr)];
+	} catch (err) {
+		return [expr, err];
+	}
 }
 
 var dicep = {
 	listeners: {
 		message: parseLine
-	},
-	reload: ['./diceParser'].map(require.resolve)
+	}
+,	reload: ['./diceParser'].map(require.resolve)
+,	defaultOptions: {
+		cap: [100]
+	}
+,	initPlugin: function() {
+		dice.options = dicep.options;
+	}
 };
 
 module.exports = dicep;

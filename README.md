@@ -19,7 +19,9 @@ Plugins
 admin
 -----
 
-This plugin provides an interface for dealing with the bot via irc.  It provides two main commands currently: `!load` and `!unload`.  Both take a plugin name, and then a combination of allow/deny parameters for channels/nicks.
+This plugin provides an interface for dealing with the bot via irc.  It provides the following commands: `load`, `unload`, `prefix`, `permissions`, `summon`, `banish`.
+
+### load
 
 If you wanted to run the dice plugin on #chan1 and #chan2, and not reply to PMs, do:
 

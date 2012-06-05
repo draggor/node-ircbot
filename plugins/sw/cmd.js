@@ -63,7 +63,7 @@ cmds.initshuffle = function(info) {
 
 cmds.shuffle = function(info) {
 	nicksToDecks[info.from] = util.randomize(cards.slice());
-	info.bot.say(info.to, info.to + '\'s deck shuffled.');
+	info.bot.say(info.to, info.from + '\'s deck shuffled.');
 };
 
 cmds.draw = function(info) {

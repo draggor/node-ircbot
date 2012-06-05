@@ -7,9 +7,11 @@
 //     number ::= '-' digit+ | digit+
 //     digit  ::= '0' | '1' | ... | '9'
 
-ReParse = require('reparse').ReParse;
+var ReParse = require('reparse').ReParse;
 
 module.exports = read;
+
+var self = module.exports;
 
 function read(input) {
 	return (new ReParse(input, true)).start(brackets);
@@ -28,7 +30,11 @@ function term() {
 }
 
 function form() {
-	return this.chainl1(factor, diceop);
+	return this.chainl1(forme, diceop);
+}
+
+function forme() {
+	return this.chainl1(factor, explodeop);
 }
 
 function factor() {
@@ -47,6 +53,10 @@ function diceop() {
 	return OPS[this.match(/^[dD]/)];
 }
 
+function explodeop() {
+	return OPS[this.match(/^[eE]/)];
+}
+
 function mulop() {
 	return OPS[this.match(/^[\*\/]/)];
 }
@@ -56,11 +66,30 @@ function addop() {
 }
 
 function dice(a, b) {
+	if(a > self.options.cap[0]) {
+		throw a + ' is greater than limit of ' + self.options.cap[0];
+	}
 	var sum = [0, []];
 	for(var i = 0; i < a; i++) {
 		var r = Math.floor(Math.random() * b) + 1;
 		sum[0] += r;
 		sum[1].push(r);
+	}
+	return sum;
+}
+
+function explode(a, b) {
+	if(a > self.options.cap[0]) {
+		throw a + ' is greater than limit of ' + self.options.cap[0];
+	}
+	var sum = [0, []];
+	for(var i = 0; i < a; i++) {
+		var r;
+		do {
+			r = Math.floor(Math.random() * b) + 1;
+			sum[0] += r;
+			sum[1].push(r);
+		} while (r === b && b > 1);
 	}
 	return sum;
 }
@@ -86,23 +115,31 @@ function objOp(op) {
 }
 
 function diceOp(a, b) {
+	return objectify(a, b, dice);
+}
+
+function explodeOp(a, b) {
+	return objectify(a, b, explode);
+}
+
+function objectify(a, b, func) {
 	if(typeof a === 'object' && typeof b === 'number') {
-		d = dice(a[0], b);
+		d = func(a[0], b);
 		a[0] = d[0];
 		a[1] = a[1].concat(d[1]);
 		return a;
 	} else if(typeof a === 'object' && typeof b === 'object') {
-		d = dice(a[0], b[0]);
+		d = func(a[0], b[0]);
 		a[0] = d[0];
 		a[1] = a[1].concat(d[1]).concat(b[1]);
 		return a;
 	} else if(typeof a === 'number' && typeof b === 'object') {
-		d = dice(a, b[0]);
+		d = func(a, b[0]);
 		b[0] = d[0];
 		b[1] = d[1].concat(b[1]);
 		return b;
 	} else if(typeof a === 'number' && typeof b === 'number') {
-		return dice(a, b);
+		return func(a, b);
 	}
 }
 function add(a, b) {
@@ -124,6 +161,8 @@ function div(a, b) {
 var OPS = {
 	'd': diceOp,
 	'D': diceOp,
+	'e': explodeOp,
+	'E': explodeOp,
 	'+': objOp(add),
 	'-': objOp(sub),
 	'*': objOp(mul),
