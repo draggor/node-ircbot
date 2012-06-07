@@ -20,10 +20,14 @@ var cardSuitSymbols = {
 ,	'R': 'R'
 ,	'B': 'B'
 };
-var cards = [ 'JR', 'JB' ];
+var cards = [ '\u000304JR\u000f', 'JB' ];
 for(var val in cardValues) {
 	for(var suit in cardSuits) {
-		cards.push(cardValues[val] + cardSuits[suit]);
+		if(cardSuits[suit] === 'D' || cardSuits[suit] == 'H') {
+			cards.push('\u000304' + cardValues[val] + cardSuits[suit] + '\u000f');
+		} else {
+			cards.push(cardValues[val] + cardSuits[suit]);
+		}
 	}
 }
 

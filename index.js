@@ -6,6 +6,7 @@ var irc = require('irc')
 
 function bot(server, nick, options) {
 	var bot = this;
+	this.colors = irc.colors;
 	this.server = server;
 	this.nick = nick;
 	this.options = options;
