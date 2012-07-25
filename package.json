@@ -1,6 +1,6 @@
 {
 	"name" : "ircbot",
-	"version" : "0.0.3",
+	"version" : "0.0.4",
 	"description" : "A simple irc bot with a reloadable plugin system",
 	"main" : "./index.js",
 	"homepage" : "http://github.com/draggor/node-ircbot/",

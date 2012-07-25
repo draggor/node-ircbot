@@ -18,7 +18,7 @@ b = new bot('irc.furnet.org', 'nodeboy1184', {
 	channels: ['#turtleshell']
 });
 
-b.loadPlugin('admin', {nick: ['draggor', 'turtle']});
+b.loadPlugin('admin', {nick: ['draggor', 'turtle'], cmdprefix: [';']});
 //b.loadPlugin('dice');
 
 var r = repl.start();

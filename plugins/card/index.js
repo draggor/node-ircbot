@@ -3,7 +3,7 @@ var commands = require('./cmd')
   ;
 
 function parseLine(from, to, msg) {
-	if(msg[0] === swp.cmdPrefix) {
+	if(msg[0] === cardp.cmdPrefix) {
 		var sp = util.split(msg, ' ', 2)
 		  , info = {
 			  from: from,
@@ -11,7 +11,7 @@ function parseLine(from, to, msg) {
 			  msg: msg,
 			  cmdstr: sp[0].substr(1),
 			  rest: sp[1],
-			  bot: swp.bot
+			  bot: cardp.bot
 		  }
 		  ;
 
@@ -19,11 +19,14 @@ function parseLine(from, to, msg) {
 	}
 }
 
-var swp = {
+var cardp = {
 	listeners: {
 		message: parseLine
-	},
-	reload: ['./cmd'].map(require.resolve)
+	}
+,	reload: ['./cmd', './decks'].map(require.resolve)
+,	initPlugin: function() {
+		commands.setDefaultDeck(cardp.options.deck);
+	}
 };
 
-module.exports = swp;
+module.exports = cardp;
